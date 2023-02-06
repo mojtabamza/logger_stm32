@@ -58,9 +58,12 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 void taskA(void) {
-	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	HAL_GPIO_TogglePin(LD1_GPIO_Port, LD1_Pin);
 }
 void taskB(void) {
+	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+}
+void taskC(void) {
 	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 }
 
@@ -98,8 +101,10 @@ int main(void)
   MX_RTC_Init();
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
-  taskManager_t::get_instance()->addTask(taskA, 70);
-  taskManager_t::get_instance()->addTask(taskB, 140);
+  taskManager_t* task_obj = taskManager_t::get_instance();
+  task_obj->addTask(taskA, 100);
+  task_obj->addTask(taskB, 150);
+  task_obj->addTask(taskC, 200);
   
 
   /* USER CODE END 2 */
@@ -108,9 +113,18 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-//	  taskManager_t::get_instance()->sysTick();
-//	  HAL_GPIO_TogglePin(LD1_GPIO_Port, LD1_Pin);
-//	  HAL_Delay(1);
+	  if(taskManager_t::get_instance()->flags[0]) {
+		  taskA();
+		  taskManager_t::get_instance()->flags[0] = 0;
+	  }
+	  if(taskManager_t::get_instance()->flags[1]) {
+		  taskB();
+		  taskManager_t::get_instance()->flags[1] = 0;
+	  }
+	  if(taskManager_t::get_instance()->flags[2]) {
+		  taskC();
+		  taskManager_t::get_instance()->flags[2] = 0;
+	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

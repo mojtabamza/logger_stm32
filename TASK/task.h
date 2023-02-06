@@ -23,9 +23,11 @@ class taskManager_t {
 		void addTask(void(*func)(void), int interval);
 		void sysTick();
 		void taskIsr();
+		vector<int> flags;
 	private:
 		taskManager_t();
 		vector<task_t*> tasks;
+		
 		int tick;
 };
 

@@ -6,7 +6,12 @@ void SysTick_Handler(void)
 
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
-	taskManager_t::get_instance()->taskIsr();
+//	static int timer = 0;
+//	if(timer >= 1) {
+		taskManager_t::get_instance()->taskIsr();
+//		timer = 0;
+//	}
+//	timer++;
 	
   /* USER CODE BEGIN SysTick_IRQn 1 */
 
@@ -30,17 +35,21 @@ void taskManager_t::addTask(void(*func)(void), int interval) {
 	new_task->task = func;
 	new_task->exeTime = new_task->interval + this->tick;
 	tasks.push_back(new_task);
+	flags.push_back(0);
 }
 
 void taskManager_t::taskIsr(void) {
-	char str[20];
-	sprintf(str, "Tick : %d\r\n", tick);
-	HAL_UART_Transmit(&huart3, (uint8_t*)str, sizeof(str), 100);
+//	char str[15];
+//	sprintf(str, "Tick : %05d\r\n", tick);
+//	HAL_UART_Transmit(&huart3, (uint8_t*)str, sizeof(str), 100);
 	this->tick++;
 	for(int i = 0; i < tasks.size(); i++) {
 		if(tasks[i]->exeTime == this->tick) {
-			tasks[i]->task();
+			//tasks[i]->task();
+			flags[i] = 1;
 			tasks[i]->exeTime = tasks[i]->interval + this->tick;
+//			sprintf(str, "flag[%d] = %d", i, flags[i]);
+//			HAL_UART_Transmit(&huart3, (uint8_t*)str, sizeof(str), 100);
 		}
 	}
 }
