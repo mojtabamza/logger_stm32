@@ -26,7 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "task.h"
-
+#include "logger.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -102,9 +102,9 @@ int main(void)
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
   taskManager_t* task_obj = taskManager_t::get_instance();
-  task_obj->addTask(taskA, 100);
-  task_obj->addTask(taskB, 150);
-  task_obj->addTask(taskC, 200);
+  task_obj->addTask(taskA, 50);
+  task_obj->addTask(taskB, 900);
+  task_obj->addTask(taskC, 150);
   
 
   /* USER CODE END 2 */
@@ -118,7 +118,8 @@ int main(void)
 		  taskManager_t::get_instance()->flags[0] = 0;
 	  }
 	  if(taskManager_t::get_instance()->flags[1]) {
-		  taskB();
+		  //taskB();
+			Logger_t::get_instance()->task();
 		  taskManager_t::get_instance()->flags[1] = 0;
 	  }
 	  if(taskManager_t::get_instance()->flags[2]) {
@@ -141,6 +142,11 @@ void SystemClock_Config(void)
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
+  /** Configure LSE Drive Capability
+  */
+  HAL_PWR_EnableBkUpAccess();
+  __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_LOW);
+
   /** Configure the main internal regulator output voltage
   */
   __HAL_RCC_PWR_CLK_ENABLE();
@@ -149,10 +155,10 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSI;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSE;
+  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = 8;
