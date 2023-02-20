@@ -9,6 +9,7 @@
 #include "usart.h"
 #include "gpio.h"
 #include "rtc.h"
+#include "time.hpp"
 
 using std::string;
 using std::vector;
