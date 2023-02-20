@@ -103,7 +103,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   taskManager_t* task_obj = taskManager_t::get_instance();
   task_obj->addTask(taskA, 50);
-  task_obj->addTask(taskB, 900);
+  task_obj->addTask(taskB, 1000);
   task_obj->addTask(taskC, 150);
   
 
